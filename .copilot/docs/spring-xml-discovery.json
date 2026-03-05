@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-03-05T21:53:08.355Z",
+  "projectType": "spring-xml-multimodule",
+  "framework": "Spring Framework (XML-based)",
+  "totalSpringXmlFiles": 0,
+  "totalBeans": 0,
+  "totalJavaFiles": 0,
+  "totalModules": 0,
+  "totalInternalLibs": 0,
+  "springConfigs": [],
+  "componentScanPackages": [],
+  "webXmlFiles": [],
+  "javaFilesByType": {
+    "controllers": 0,
+    "services": 0,
+    "repositories": 0,
+    "components": 0
+  },
+  "internalLibs": [],
+  "statistics": {
+    "springXmlConfigs": 0,
+    "totalBeanDefinitions": 0,
+    "componentScanPackages": 0,
+    "webApplications": 0,
+    "controllers": 0,
+    "services": 0,
+    "repositories": 0,
+    "internalLibModules": 0,
+    "internalLibJavaFiles": 0
+  }
+}

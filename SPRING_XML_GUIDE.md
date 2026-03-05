@@ -10,6 +10,16 @@
 
 ---
 
+## 📖 Tài Liệu Liên Quan
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Hướng dẫn nhanh 5 phút
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Hướng dẫn đầy đủ (workflow, commands)
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Hướng dẫn cho Maven projects
+- **[README.md](./README.md)** - Tổng quan hệ thống
+- **[CHANGELOG.md](./CHANGELOG.md)** - Lịch sử phiên bản
+
+---
+
 ## 📋 Typical Spring XML Project Structure
 
 ```
@@ -448,6 +458,8 @@ export { discoverSpringXmlProject };
 
 ### Add to package.json
 
+File: `.copilot/package.json`
+
 ```json
 {
   "scripts": {
@@ -455,7 +467,7 @@ export { discoverSpringXmlProject };
     "discover:maven": "node scripts/discover-maven.js",
     "discover:spring": "node scripts/discover-spring-xml.js",
     "generate": "node scripts/generate-docs.js",
-    "update": "node scripts/update-context.js && node scripts/discover-spring-xml.js",
+    "update": "npm run discover && npm run discover:maven && npm run discover:spring && npm run generate",
     "watch": "nodemon --watch ../src --exec 'npm run update'"
   }
 }
@@ -938,11 +950,17 @@ npm install
 ### 4. Run Discovery
 
 ```bash
-# Từ .copilot/
+# Từ project root (recommended)
+npm run copilot:update
+
+# Hoặc từ .copilot/
+cd .copilot
 npm run discover:spring
 
 # Xem kết quả
+cat docs/discovery.json
 cat docs/spring-xml-discovery.json
+cat docs/architecture/overview.md
 ```
 
 ### 5. Use with Copilot

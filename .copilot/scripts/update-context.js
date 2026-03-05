@@ -23,6 +23,10 @@ async function updateContext() {
 
     // 3. Log update
     const logPath = path.join(__dirname, '../logs/updates.log');
+    const logDir = path.dirname(logPath);
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
     const logEntry = `${new Date().toISOString()} - Context updated\n`;
     fs.appendFileSync(logPath, logEntry);
 

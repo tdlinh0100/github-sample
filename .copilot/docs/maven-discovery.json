@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-03-05T21:53:08.476Z",
+  "projectType": "maven-multimodule",
+  "totalModules": 0,
+  "totalJavaFiles": 0,
+  "totalResourceFiles": 0,
+  "modules": {
+    "parent": [],
+    "core": [],
+    "api": [],
+    "service": [],
+    "web": [],
+    "common": [],
+    "other": []
+  },
+  "javaFiles": {
+    "main": [],
+    "test": [],
+    "controller": [],
+    "service": [],
+    "repository": [],
+    "entity": [],
+    "dto": [],
+    "config": []
+  },
+  "parentPom": null,
+  "statistics": {
+    "mainSourceFiles": 0,
+    "testFiles": 0,
+    "controllers": 0,
+    "services": 0,
+    "repositories": 0,
+    "entities": 0,
+    "dtos": 0,
+    "configs": 0
+  }
+}

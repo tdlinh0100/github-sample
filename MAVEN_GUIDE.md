@@ -5,6 +5,16 @@
 
 ---
 
+## 📖 Tài Liệu Liên Quan
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Hướng dẫn nhanh 5 phút
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Hướng dẫn đầy đủ (workflow, commands)
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Hướng dẫn cho Spring XML projects
+- **[README.md](./README.md)** - Tổng quan hệ thống
+- **[CHANGELOG.md](./CHANGELOG.md)** - Lịch sử phiên bản
+
+---
+
 ## 📋 Maven Multi-Module Project Structure
 
 ### Typical Structure
@@ -338,13 +348,15 @@ export { discoverMavenProject };
 
 ### Add to package.json
 
+File: `.copilot/package.json`
+
 ```json
 {
   "scripts": {
     "discover": "node scripts/discover.js",
     "discover:maven": "node scripts/discover-maven.js",
     "generate": "node scripts/generate-docs.js",
-    "update": "node scripts/update-context.js && node scripts/discover-maven.js",
+    "update": "npm run discover && npm run discover:maven && npm run generate",
     "watch": "nodemon --watch ../src --exec 'npm run update'"
   }
 }
@@ -639,12 +651,16 @@ cat docs/maven-discovery.json
 ### 4. Update Context
 
 ```bash
-# Từ project root
+# Từ project root (recommended)
 npm run copilot:update
 
 # Hoặc từ .copilot/
 cd .copilot
 npm run update
+
+# Xem kết quả
+cat docs/discovery.json
+cat docs/maven-discovery.json
 ```
 
 ### 5. Use with Copilot

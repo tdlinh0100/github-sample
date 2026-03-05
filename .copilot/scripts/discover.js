@@ -8,6 +8,8 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { discoverMavenProject } from './discover-maven.js';
+import { discoverSpringXmlProject } from './discover-spring-xml.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -224,6 +226,40 @@ async function discoverProject() {
   logger.info('Starting project discovery');
 
   try {
+    // Auto-detect Maven and Spring XML projects
+    const hasPomXml = fsSync.existsSync(path.join(PROJECT_ROOT, 'pom.xml'));
+    const hasSpringXml = await glob('**/applicationContext*.xml', {
+      cwd: PROJECT_ROOT,
+      ignore: ['**/target/**', '**/node_modules/**', '**/.copilot/**']
+    }).then(files => files.length > 0);
+
+    let mavenDiscovery = null;
+    let springXmlDiscovery = null;
+
+    if (hasPomXml) {
+      spinner.text = 'Detecting Maven project...';
+      logger.info('Maven project detected, running Maven discovery');
+      try {
+        mavenDiscovery = await discoverMavenProject();
+      } catch (error) {
+        logger.warn('Maven discovery failed', { error: error.message });
+        console.log(chalk.yellow('⚠ Maven discovery failed, continuing with standard discovery'));
+      }
+    }
+
+    if (hasSpringXml) {
+      spinner.text = 'Detecting Spring XML project...';
+      logger.info('Spring XML project detected, running Spring XML discovery');
+      try {
+        springXmlDiscovery = await discoverSpringXmlProject();
+      } catch (error) {
+        logger.warn('Spring XML discovery failed', { error: error.message });
+        console.log(chalk.yellow('⚠ Spring XML discovery failed, continuing with standard discovery'));
+      }
+    }
+
+    spinner.text = 'Discovering project structure...';
+
     // 1. Find all source files
     const patterns = config.scan.extensions.map(ext => `**/*${ext}`);
     const files = await glob(patterns, {
@@ -235,7 +271,7 @@ async function discoverProject() {
     logger.info(`Found ${files.length} files`);
     spinner.text = `Found ${files.length} files`;
 
-    // 2. Categorize files
+    // 2. Categorize files with batch processing (performance optimization)
     const categorized = {
       frontend: [],
       backend: [],
@@ -247,31 +283,44 @@ async function discoverProject() {
     let processedCount = 0;
     const totalFiles = files.length;
 
-    for (const file of files) {
-      // FIX 1: Use PROJECT_ROOT instead of process.cwd()
-      const relativePath = path.relative(PROJECT_ROOT, file);
+    // Batch process file stats in parallel
+    const BATCH_SIZE = 100;
+    for (let i = 0; i < files.length; i += BATCH_SIZE) {
+      const batch = files.slice(i, i + BATCH_SIZE);
 
-      // Check file size before processing
-      try {
-        const stats = await fs.stat(file);
-        if (stats.size > config.scan.maxFileSize) {
-          logger.warn(`Skipping large file`, {
-            file: relativePath,
-            size: stats.size,
-            maxSize: config.scan.maxFileSize
-          });
-          console.log(chalk.yellow(`⚠ Skipping ${relativePath}: file size (${stats.size} bytes) exceeds maxFileSize (${config.scan.maxFileSize} bytes)`));
-          continue;
+      const batchResults = await Promise.all(
+        batch.map(async (file) => {
+          const relativePath = path.relative(PROJECT_ROOT, file);
+
+          // Check file size before processing
+          try {
+            const stats = await fs.stat(file);
+            if (stats.size > config.scan.maxFileSize) {
+              logger.warn(`Skipping large file`, {
+                file: relativePath,
+                size: stats.size,
+                maxSize: config.scan.maxFileSize
+              });
+              console.log(chalk.yellow(`⚠ Skipping ${relativePath}: file size (${stats.size} bytes) exceeds maxFileSize (${config.scan.maxFileSize} bytes)`));
+              return null;
+            }
+            return { relativePath, category: categorizeFile(relativePath) };
+          } catch (error) {
+            logger.warn(`Could not check file size`, { file: relativePath, error: error.message });
+            console.log(chalk.yellow(`⚠ Could not check size for ${relativePath}: ${error.message}`));
+            return null;
+          }
+        })
+      );
+
+      // Process batch results
+      for (const result of batchResults) {
+        if (result) {
+          categorized[result.category].push(result.relativePath);
         }
-      } catch (error) {
-        logger.warn(`Could not check file size`, { file: relativePath, error: error.message });
-        console.log(chalk.yellow(`⚠ Could not check size for ${relativePath}: ${error.message}`));
       }
 
-      const category = categorizeFile(relativePath);
-      categorized[category].push(relativePath);
-
-      processedCount++;
+      processedCount += batch.length;
       if (processedCount % 100 === 0) {
         spinner.text = `Processing files... ${processedCount}/${totalFiles}`;
         logger.debug(`Processing progress`, { processed: processedCount, total: totalFiles });
@@ -392,7 +441,9 @@ async function discoverProject() {
         name: packageJson.name || 'unknown',
         version: packageJson.version || '0.0.0',
         description: packageJson.description || 'No description'
-      }
+      },
+      maven: mavenDiscovery,
+      springXml: springXmlDiscovery
     };
 
     const outputPath = path.join(__dirname, '../docs/discovery.json');

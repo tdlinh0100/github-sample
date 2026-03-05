@@ -13,6 +13,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 
+// Compile regex patterns once (performance optimization)
+const GROUP_ID_REGEX = /<groupId>(.*?)<\/groupId>/;
+const ARTIFACT_ID_REGEX = /<artifactId>(.*?)<\/artifactId>/;
+const VERSION_REGEX = /<version>(.*?)<\/version>/;
+const MODULES_REGEX = /<modules>([\s\S]*?)<\/modules>/;
+const MODULE_REGEX = /<module>(.*?)<\/module>/g;
+const DEPENDENCIES_REGEX = /<dependencies>([\s\S]*?)<\/dependencies>/;
+const DEPENDENCY_REGEX = /<dependency>/g;
+
 // Utility: Ensure directory exists
 function ensureDirectoryExists(dirPath) {
   return fs.mkdir(dirPath, { recursive: true }).catch(() => {});
@@ -47,32 +56,32 @@ async function parsePomXml(pomPath) {
   try {
     const content = await fs.readFile(pomPath, 'utf-8');
 
-    // Extract groupId
-    const groupIdMatch = content.match(/<groupId>(.*?)<\/groupId>/);
+    // Extract groupId (using pre-compiled regex)
+    const groupIdMatch = content.match(GROUP_ID_REGEX);
     const groupId = groupIdMatch ? groupIdMatch[1] : null;
 
-    // Extract artifactId
-    const artifactIdMatch = content.match(/<artifactId>(.*?)<\/artifactId>/);
+    // Extract artifactId (using pre-compiled regex)
+    const artifactIdMatch = content.match(ARTIFACT_ID_REGEX);
     const artifactId = artifactIdMatch ? artifactIdMatch[1] : null;
 
-    // Extract version
-    const versionMatch = content.match(/<version>(.*?)<\/version>/);
+    // Extract version (using pre-compiled regex)
+    const versionMatch = content.match(VERSION_REGEX);
     const version = versionMatch ? versionMatch[1] : null;
 
-    // Extract modules
-    const modulesMatch = content.match(/<modules>([\s\S]*?)<\/modules>/);
+    // Extract modules (using pre-compiled regex)
+    const modulesMatch = content.match(MODULES_REGEX);
     const modules = [];
     if (modulesMatch) {
-      const moduleMatches = modulesMatch[1].matchAll(/<module>(.*?)<\/module>/g);
+      const moduleMatches = modulesMatch[1].matchAll(MODULE_REGEX);
       for (const match of moduleMatches) {
         modules.push(match[1]);
       }
     }
 
-    // Extract dependencies count
-    const dependenciesMatch = content.match(/<dependencies>([\s\S]*?)<\/dependencies>/);
+    // Extract dependencies count (using pre-compiled regex)
+    const dependenciesMatch = content.match(DEPENDENCIES_REGEX);
     const dependenciesCount = dependenciesMatch
-      ? (dependenciesMatch[1].match(/<dependency>/g) || []).length
+      ? (dependenciesMatch[1].match(DEPENDENCY_REGEX) || []).length
       : 0;
 
     return {
@@ -104,11 +113,16 @@ async function discoverMavenProject() {
 
     spinner.text = `Found ${pomFiles.length} pom.xml files`;
 
-    // Parse all POMs
+    // Parse all POMs in parallel (performance optimization)
     const modules = [];
-    for (const pomFile of pomFiles) {
-      const pomPath = path.join(PROJECT_ROOT, pomFile);
-      const pomInfo = await parsePomXml(pomPath);
+    const pomInfos = await Promise.all(
+      pomFiles.map(pomFile => {
+        const pomPath = path.join(PROJECT_ROOT, pomFile);
+        return parsePomXml(pomPath);
+      })
+    );
+
+    for (const pomInfo of pomInfos) {
       if (pomInfo) {
         modules.push(pomInfo);
       }

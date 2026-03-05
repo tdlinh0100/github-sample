@@ -5,6 +5,8 @@
 **Trạng thái:** ✅ Production Ready
 **Quality Score:** 8.5/10
 
+> **Mới bắt đầu?** Xem [QUICKSTART.md](./QUICKSTART.md) để setup trong 5 phút.
+
 ---
 
 ## 📚 Mục Lục
@@ -17,6 +19,16 @@
 6. [Cấu Hình](#cấu-hình)
 7. [Troubleshooting](#troubleshooting)
 8. [FAQ](#faq)
+
+---
+
+## 📖 Tài Liệu Liên Quan
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Hướng dẫn nhanh 5 phút
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Hướng dẫn cho Maven projects
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Hướng dẫn cho Spring XML projects
+- **[README.md](./README.md)** - Tổng quan hệ thống
+- **[CHANGELOG.md](./CHANGELOG.md)** - Lịch sử phiên bản
 
 ---
 
@@ -189,7 +201,11 @@ npm run copilot:watch
 ### 1. Update Context (Dùng Nhiều Nhất)
 
 ```bash
+# Từ project root (recommended)
 npm run copilot:update
+
+# Hoặc từ .copilot/
+cd .copilot && npm run update
 ```
 
 **Làm gì:**
@@ -219,7 +235,11 @@ npm run copilot:update
 ### 2. Initial Setup
 
 ```bash
+# Từ project root (recommended)
 npm run copilot:init
+
+# Hoặc từ .copilot/
+cd .copilot && npm run discover && npm run generate
 ```
 
 **Làm gì:**
@@ -234,7 +254,11 @@ npm run copilot:init
 ### 3. Watch Mode
 
 ```bash
+# Từ project root (recommended)
 npm run copilot:watch
+
+# Hoặc từ .copilot/
+cd .copilot && npm run watch
 ```
 
 **Làm gì:**
@@ -270,6 +294,12 @@ cat .copilot/docs/codemaps/frontend-map.json
 
 # Backend files map
 cat .copilot/docs/codemaps/backend-map.json
+
+# Maven discovery (nếu có)
+cat .copilot/docs/maven-discovery.json
+
+# Spring XML discovery (nếu có)
+cat .copilot/docs/spring-xml-discovery.json
 
 # Logs
 cat .copilot/logs/discover.log | jq .
@@ -620,7 +650,7 @@ npm run copilot:update  # Update cho lần sau
 ## 🎯 Quick Commands Reference
 
 ```bash
-# Most used
+# Most used (từ project root)
 npm run copilot:update    # Update context (2-3 lần/ngày)
 npm run copilot:watch     # Watch mode (optional)
 npm run copilot:init      # Full regenerate (rare)

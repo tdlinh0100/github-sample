@@ -50,5 +50,9 @@
     "astGrep": {
       "enabled": true
     }
+  },
+  "internalLibs": {
+    "enabled": true,
+    "paths": ["../lib", "../internal-libs"]
   }
 }

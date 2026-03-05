@@ -13,6 +13,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 
+// Compile regex patterns once (performance optimization)
+const BEAN_REGEX = /<bean[^>]*id="([^"]*)"[^>]*class="([^"]*)"/g;
+const COMPONENT_SCAN_REGEX = /<context:component-scan[^>]*base-package="([^"]*)"/g;
+const IMPORT_REGEX = /<import[^>]*resource="([^"]*)"/g;
+const PROPERTY_PLACEHOLDER_REGEX = /<context:property-placeholder[^>]*location="([^"]*)"/g;
+
 // Utility: Ensure directory exists
 function ensureDirectoryExists(dirPath) {
   return fs.mkdir(dirPath, { recursive: true }).catch(() => {});
@@ -36,8 +42,8 @@ async function parseSpringXml(xmlPath) {
   try {
     const content = await fs.readFile(xmlPath, 'utf-8');
 
-    // Extract bean definitions
-    const beanMatches = content.matchAll(/<bean[^>]*id="([^"]*)"[^>]*class="([^"]*)"/g);
+    // Extract bean definitions (using pre-compiled regex)
+    const beanMatches = content.matchAll(BEAN_REGEX);
     const beans = [];
     for (const match of beanMatches) {
       beans.push({
@@ -46,22 +52,22 @@ async function parseSpringXml(xmlPath) {
       });
     }
 
-    // Extract component-scan base packages
-    const scanMatches = content.matchAll(/<context:component-scan[^>]*base-package="([^"]*)"/g);
+    // Extract component-scan base packages (using pre-compiled regex)
+    const scanMatches = content.matchAll(COMPONENT_SCAN_REGEX);
     const scanPackages = [];
     for (const match of scanMatches) {
       scanPackages.push(match[1]);
     }
 
-    // Extract imports
-    const importMatches = content.matchAll(/<import[^>]*resource="([^"]*)"/g);
+    // Extract imports (using pre-compiled regex)
+    const importMatches = content.matchAll(IMPORT_REGEX);
     const imports = [];
     for (const match of importMatches) {
       imports.push(match[1]);
     }
 
-    // Extract property placeholders
-    const propertyMatches = content.matchAll(/<context:property-placeholder[^>]*location="([^"]*)"/g);
+    // Extract property placeholders (using pre-compiled regex)
+    const propertyMatches = content.matchAll(PROPERTY_PLACEHOLDER_REGEX);
     const propertyFiles = [];
     for (const match of propertyMatches) {
       propertyFiles.push(match[1]);
@@ -134,6 +140,18 @@ async function fileContainsAnnotation(filePath, annotation) {
 }
 
 /**
+ * Check multiple annotations in a single file read (performance optimization)
+ */
+async function checkAnnotations(filePath, annotations) {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return annotations.map(annotation => content.includes(annotation));
+  } catch (error) {
+    return annotations.map(() => false);
+  }
+}
+
+/**
  * Discover Spring XML project structure
  */
 async function discoverSpringXmlProject() {
@@ -168,14 +186,19 @@ async function discoverSpringXmlProject() {
 
     spinner.text = `Found ${uniqueXmlFiles.length} Spring XML config files`;
 
-    // Parse all Spring XML files
+    // Parse all Spring XML files in parallel (performance optimization)
     const springConfigs = [];
     let totalBeans = 0;
     const allComponentScanPackages = new Set();
 
-    for (const xmlFile of uniqueXmlFiles) {
-      const xmlPath = path.join(PROJECT_ROOT, xmlFile);
-      const xmlInfo = await parseSpringXml(xmlPath);
+    const xmlInfos = await Promise.all(
+      uniqueXmlFiles.map(xmlFile => {
+        const xmlPath = path.join(PROJECT_ROOT, xmlFile);
+        return parseSpringXml(xmlPath);
+      })
+    );
+
+    for (const xmlInfo of xmlInfos) {
       if (xmlInfo) {
         springConfigs.push(xmlInfo);
         totalBeans += xmlInfo.totalBeans;
@@ -212,13 +235,15 @@ async function discoverSpringXmlProject() {
       const results = await Promise.all(
         batch.map(async (file) => {
           const fullPath = path.join(PROJECT_ROOT, file);
+          // Single file read for all annotations (performance optimization)
+          const [isController, isRestController, isService, isRepository, isComponent] =
+            await checkAnnotations(fullPath, ['@Controller', '@RestController', '@Service', '@Repository', '@Component']);
           return {
             file,
-            isController: await fileContainsAnnotation(fullPath, '@Controller') ||
-                         await fileContainsAnnotation(fullPath, '@RestController'),
-            isService: await fileContainsAnnotation(fullPath, '@Service'),
-            isRepository: await fileContainsAnnotation(fullPath, '@Repository'),
-            isComponent: await fileContainsAnnotation(fullPath, '@Component')
+            isController: isController || isRestController,
+            isService,
+            isRepository,
+            isComponent
           };
         })
       );

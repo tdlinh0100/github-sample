@@ -65,9 +65,15 @@ code .
 
 ## 📖 Documentation
 
-**Main Guide:** [HUONG_DAN.md](./HUONG_DAN.md) (Vietnamese, comprehensive)
+### Quick Start
+- **[QUICKSTART.md](./QUICKSTART.md)** - Get started in 5 minutes
 
-**Quick Reference:**
+### Comprehensive Guides
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Complete Vietnamese guide (workflow, commands, troubleshooting)
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Maven multi-module projects
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Spring Framework with XML configuration
+
+### Quick Reference
 - Update context: `npm run copilot:update`
 - Watch mode: `npm run copilot:watch`
 - Run tests: `cd .copilot && npm test`
@@ -110,10 +116,14 @@ git push
 ## 🎯 Commands
 
 ```bash
+# From project root (recommended)
 npm run copilot:update    # Update context (most used)
 npm run copilot:watch     # Auto-update on file change (optional)
 npm run copilot:init      # Full regenerate (rare)
-cd .copilot && npm test   # Run tests (16 tests)
+
+# From .copilot/ directory
+cd .copilot && npm run update    # Update context
+cd .copilot && npm test          # Run tests (16 tests)
 ```
 
 ---
@@ -256,9 +266,18 @@ cd .. && npm run copilot:init
 
 ## 📚 Full Documentation
 
-- **Main Guide:** [HUONG_DAN.md](./HUONG_DAN.md) - Comprehensive Vietnamese guide
-- **Config:** `.copilot/config.json` - System configuration
-- **Instructions:** `.github/copilot-instructions.md` - Copilot context
+### User Guides
+- **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute quick start
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Comprehensive Vietnamese guide
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Maven projects guide
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Spring XML projects guide
+
+### Configuration Files
+- **`.copilot/config.json`** - System configuration
+- **`.github/copilot-instructions.md`** - Copilot context (auto-generated)
+
+### Changelog
+- **[CHANGELOG.md](./CHANGELOG.md)** - Version history and changes
 
 ---
 
