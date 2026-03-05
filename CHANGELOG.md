@@ -1,61 +1,61 @@
-# Changelog
+# Lịch Sử Thay Đổi
 
-All notable changes to GitHub Copilot Workflow System.
+Tất cả các thay đổi đáng chú ý của GitHub Copilot Workflow System.
 
 ## [3.0.0] - 2026-03-05
 
-### Added
-- **QUICKSTART.md** - 5-minute quick start guide
-- Cross-references between all documentation files
-- Maven multi-module project support guide
-- Spring XML configuration project support guide
-- Comprehensive documentation index in README.md
+### Thêm Mới
+- **QUICKSTART.md** - Hướng dẫn bắt đầu nhanh 5 phút
+- Cross-references giữa tất cả các file tài liệu
+- Hỗ trợ Maven multi-module project
+- Hỗ trợ Spring XML configuration project
+- Chỉ mục tài liệu đầy đủ trong README.md
 
-### Changed
-- Updated README.md with better documentation structure
-- Improved HUONG_DAN.md with cross-references
-- Standardized command examples across all guides
-- Enhanced MAVEN_GUIDE.md with related documentation links
-- Enhanced SPRING_XML_GUIDE.md with related documentation links
+### Thay Đổi
+- Cập nhật README.md với cấu trúc tài liệu tốt hơn
+- Cải thiện HUONG_DAN.md với cross-references
+- Chuẩn hóa các ví dụ lệnh trong tất cả hướng dẫn
+- Nâng cao MAVEN_GUIDE.md với links tài liệu liên quan
+- Nâng cao SPRING_XML_GUIDE.md với links tài liệu liên quan
 
-### Fixed
-- Inconsistent script commands across documentation
-- Missing cross-references between guides
-- Contradictory instructions in different files
+### Sửa Lỗi
+- Lệnh script không nhất quán trong tài liệu
+- Thiếu cross-references giữa các hướng dẫn
+- Hướng dẫn mâu thuẫn trong các files khác nhau
 
 ## [2.0.0] - 2026-03-04
 
-### Added
-- Manual control workflow (no git hooks)
-- Watch mode for auto-updates
-- Structured logging with rotation
-- 16 comprehensive tests (100% pass)
-- Async I/O for 40% performance improvement
+### Thêm Mới
+- Workflow kiểm soát thủ công (không có git hooks)
+- Watch mode cho auto-updates
+- Structured logging với rotation
+- 16 tests toàn diện (100% pass)
+- Async I/O cho cải thiện performance 40%
 
-### Changed
-- Removed automatic git hooks
-- User now controls when to update context
-- Improved performance with parallel operations
+### Thay Đổi
+- Loại bỏ git hooks tự động
+- User giờ kiểm soát khi nào update context
+- Cải thiện performance với parallel operations
 
-### Removed
-- Automatic git hook installation
+### Loại Bỏ
+- Cài đặt git hooks tự động
 - Pre-commit hook auto-execution
 
 ## [1.0.0] - 2026-03-03
 
-### Added
-- Initial release
-- Automatic codebase discovery
-- Tech stack detection
-- Documentation generation
-- GitHub Copilot instructions generation
-- Basic configuration system
+### Thêm Mới
+- Phát hành ban đầu
+- Tự động khám phá codebase
+- Phát hiện tech stack
+- Tạo documentation
+- Tạo GitHub Copilot instructions
+- Hệ thống cấu hình cơ bản
 
 ---
 
-**Version Format:** [Major.Minor.Patch]
+**Định dạng phiên bản:** [Major.Minor.Patch]
 - **Major:** Breaking changes
-- **Minor:** New features (backward compatible)
-- **Patch:** Bug fixes
+- **Minor:** Tính năng mới (tương thích ngược)
+- **Patch:** Sửa lỗi
 
-**Date Format:** YYYY-MM-DD
+**Định dạng ngày:** YYYY-MM-DD

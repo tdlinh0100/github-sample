@@ -1,10 +1,10 @@
-# ⚡ Quick Start - 5 Minutes
+# ⚡ Bắt Đầu Nhanh - 5 Phút
 
-Get GitHub Copilot Workflow System running in 5 minutes.
+Chạy GitHub Copilot Workflow System trong 5 phút.
 
 ---
 
-## Prerequisites
+## Yêu Cầu
 
 - Node.js 18+
 - npm 8+
@@ -13,48 +13,48 @@ Get GitHub Copilot Workflow System running in 5 minutes.
 
 ---
 
-## Installation (3 Commands)
+## Cài Đặt (3 Lệnh)
 
-### For New Project
+### Cho Project Mới
 
 ```bash
-# 1. Add source code
+# 1. Thêm source code
 mkdir -p src
 echo "console.log('Hello World')" > src/index.js
 
 # 2. Update context
 npm run copilot:update
 
-# 3. Open in VS Code
+# 3. Mở trong VS Code
 code .
 ```
 
-### For Existing Project
+### Cho Project Có Sẵn
 
 ```bash
-# 1. Copy system to your project
+# 1. Copy hệ thống vào project của bạn
 cp -r .copilot /your/project/
 cp -r .github /your/project/
 
-# 2. Install dependencies
+# 2. Cài đặt dependencies
 cd /your/project/.copilot && npm install
 
-# 3. Add scripts to package.json
+# 3. Thêm scripts vào package.json
 cd ..
 npm pkg set scripts.copilot:init="cd .copilot && npm run discover && npm run generate"
 npm pkg set scripts.copilot:update="cd .copilot && npm run update"
 npm pkg set scripts.copilot:watch="cd .copilot && npm run watch"
 
-# 4. Run initial discovery
+# 4. Chạy discovery ban đầu
 npm run copilot:init
 
-# 5. Open in VS Code
+# 5. Mở trong VS Code
 code .
 ```
 
 ---
 
-## First Run
+## Chạy Lần Đầu
 
 ### 1. Update Context
 
@@ -75,122 +75,122 @@ npm run copilot:update
 ✅ Context update complete!
 ```
 
-### 2. Verify It Works
+### 2. Xác Minh Hoạt Động
 
 ```bash
-# Check generated docs
+# Kiểm tra docs được tạo
 cat .copilot/docs/discovery.json
 cat .copilot/docs/architecture/overview.md
 
-# Check Copilot instructions
+# Kiểm tra Copilot instructions
 cat .github/copilot-instructions.md
 ```
 
-### 3. Use with GitHub Copilot
+### 3. Sử Dụng Với GitHub Copilot
 
-Open VS Code and try:
+Mở VS Code và thử:
 
 ```
-@workspace What is the project structure?
-@workspace What tech stack does this project use?
-@workspace Show me all API endpoints
+@workspace Cấu trúc project này như thế nào?
+@workspace Project này dùng tech stack gì?
+@workspace Cho tôi xem tất cả API endpoints
 ```
 
 ---
 
-## Verify It Works
+## Xác Minh Hoạt Động
 
-### Test 1: Context Generated
+### Test 1: Context Được Tạo
 
 ```bash
-# Should show project metadata
+# Nên hiển thị project metadata
 cat .copilot/docs/discovery.json | head -20
 ```
 
-**Expected:** JSON with project info, file counts, tech stack
+**Kỳ vọng:** JSON với thông tin project, số lượng files, tech stack
 
-### Test 2: Copilot Instructions Created
+### Test 2: Copilot Instructions Được Tạo
 
 ```bash
-# Should show instructions for Copilot
+# Nên hiển thị instructions cho Copilot
 cat .github/copilot-instructions.md | head -30
 ```
 
-**Expected:** Markdown with project context, coding standards
+**Kỳ vọng:** Markdown với context của project, coding standards
 
-### Test 3: Copilot Understands Project
+### Test 3: Copilot Hiểu Project
 
-In VS Code Copilot Chat:
+Trong VS Code Copilot Chat:
 ```
-@workspace What files are in this project?
+@workspace Project này có những files gì?
 ```
 
-**Expected:** Copilot lists files and explains structure
+**Kỳ vọng:** Copilot liệt kê files và giải thích cấu trúc
 
 ---
 
-## Next Steps
+## Bước Tiếp Theo
 
-### Daily Usage
+### Sử Dụng Hàng Ngày
 
 ```bash
-# Update context 2-3 times per day
+# Update context 2-3 lần mỗi ngày
 npm run copilot:update
 
-# Or use watch mode (auto-update on file change)
+# Hoặc dùng watch mode (auto-update khi file thay đổi)
 npm run copilot:watch
 ```
 
-### Learn More
+### Tìm Hiểu Thêm
 
-- **Full Guide:** [HUONG_DAN.md](./HUONG_DAN.md) - Comprehensive Vietnamese guide
-- **Maven Projects:** [MAVEN_GUIDE.md](./MAVEN_GUIDE.md) - Maven multi-module setup
-- **Spring XML Projects:** [SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md) - Spring Framework with XML config
-- **Main README:** [README.md](./README.md) - Overview and features
-- **Changelog:** [CHANGELOG.md](./CHANGELOG.md) - Version history
+- **Hướng dẫn đầy đủ:** [HUONG_DAN.md](./HUONG_DAN.md) - Hướng dẫn tiếng Việt đầy đủ
+- **Maven Projects:** [MAVEN_GUIDE.md](./MAVEN_GUIDE.md) - Setup Maven multi-module
+- **Spring XML Projects:** [SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md) - Spring Framework với XML config
+- **README chính:** [README.md](./README.md) - Tổng quan và tính năng
+- **Changelog:** [CHANGELOG.md](./CHANGELOG.md) - Lịch sử phiên bản
 
-### Common Commands
+### Các Lệnh Thường Dùng
 
 ```bash
-npm run copilot:update    # Update context (most used)
-npm run copilot:watch     # Auto-update on file change
-npm run copilot:init      # Full regenerate (rare)
-cd .copilot && npm test   # Run tests
+npm run copilot:update    # Update context (dùng nhiều nhất)
+npm run copilot:watch     # Auto-update khi file thay đổi
+npm run copilot:init      # Tạo lại toàn bộ (hiếm khi dùng)
+cd .copilot && npm test   # Chạy tests
 ```
 
 ### Troubleshooting
 
-**Discovery finds 0 files:**
+**Discovery tìm 0 files:**
 ```bash
-# Check config
+# Kiểm tra config
 cat .copilot/config.json
 
-# Add your file extensions
+# Thêm file extensions của bạn
 # Update ignore patterns
-# Run again
+# Chạy lại
 npm run copilot:update
 ```
 
-**Copilot not reading instructions:**
+**Copilot không đọc instructions:**
 1. Restart VS Code
 2. Clear Copilot cache: Cmd/Ctrl+Shift+P → "Copilot: Clear Cache"
-3. Reference file directly: `#file:.github/copilot-instructions.md`
+3. Reference file trực tiếp: `#file:.github/copilot-instructions.md`
 
 ---
 
-## What You Get
+## Những Gì Bạn Nhận Được
 
-- `.copilot/docs/discovery.json` - Project metadata
-- `.copilot/docs/architecture/overview.md` - Architecture overview
-- `.copilot/docs/codemaps/*.json` - File categorization
-- `.github/copilot-instructions.md` - Context for Copilot (11.5KB)
+- `.copilot/docs/discovery.json` - Metadata của project
+- `.copilot/docs/architecture/overview.md` - Tổng quan kiến trúc
+- `.copilot/docs/codemaps/*.json` - Phân loại files
+- `.github/copilot-instructions.md` - Context cho Copilot (11.5KB)
 - 16 tests, 100% pass
-- Structured logs with rotation
+- Structured logs với rotation
 
 ---
 
-## Ready! 🚀
+## Sẵn Sàng! 🚀
 
-You're all set. Start coding and ask Copilot questions about your project.
+Bạn đã setup xong. Bắt đầu code và hỏi Copilot về project của bạn.
 
-**Need help?** See [HUONG_DAN.md](./HUONG_DAN.md) for detailed instructions.
+**Cần trợ giúp?** Xem [HUONG_DAN.md](./HUONG_DAN.md) để biết hướng dẫn chi tiết.

@@ -1,150 +1,150 @@
-# GitHub Copilot Workflow System
+# Hệ Thống GitHub Copilot Workflow
 
-> Automated context management for GitHub Copilot - **Manual Control, No Git Hooks**
+> Quản lý context tự động cho GitHub Copilot - **Kiểm soát thủ công, không có Git Hooks**
 
-**Version:** 3.0 - Manual Control
-**Status:** ✅ Production Ready
-**Quality:** 8.5/10
-
----
-
-## 🎯 What Is This?
-
-A workflow system that helps GitHub Copilot understand your project better by:
-
-✅ Auto-scanning codebase structure
-✅ Detecting tech stack automatically
-✅ Generating documentation for Copilot
-✅ Improving Copilot suggestions by 20-30%
-
-**Key Feature:** **You control when to update** - No automatic git hooks!
+**Phiên bản:** 3.0 - Manual Control
+**Trạng thái:** ✅ Production Ready
+**Chất lượng:** 8.5/10
 
 ---
 
-## 🚀 Quick Start
+## 🎯 Đây Là Gì?
 
-### For New Project (Empty)
+Một hệ thống workflow giúp GitHub Copilot hiểu project của bạn tốt hơn bằng cách:
+
+✅ Tự động quét cấu trúc codebase
+✅ Phát hiện tech stack tự động
+✅ Tạo documentation cho Copilot
+✅ Cải thiện suggestions của Copilot 20-30%
+
+**Tính năng chính:** **Bạn kiểm soát khi nào update** - Không có git hooks tự động!
+
+---
+
+## 🚀 Bắt Đầu Nhanh
+
+### Cho Project Mới (Trống)
 
 ```bash
-# 1. Add source code
+# 1. Thêm source code
 mkdir -p src
 echo "console.log('Hello')" > src/index.js
 
-# 2. Update context (manual)
+# 2. Update context (thủ công)
 npm run copilot:update
 
-# 3. Use with GitHub Copilot
+# 3. Sử dụng với GitHub Copilot
 code .
-# @workspace What is the project structure?
+# @workspace Cấu trúc project này như thế nào?
 ```
 
-### For Existing Project
+### Cho Project Có Sẵn
 
 ```bash
-# 1. Copy system to your project
+# 1. Copy hệ thống vào project của bạn
 cp -r .copilot /your/project/
 cp -r .github /your/project/
 
-# 2. Install
+# 2. Cài đặt
 cd /your/project/.copilot && npm install
 
-# 3. Add scripts to package.json
+# 3. Thêm scripts vào package.json
 cd ..
 npm pkg set scripts.copilot:init="cd .copilot && npm run discover && npm run generate"
 npm pkg set scripts.copilot:update="cd .copilot && npm run update"
 npm pkg set scripts.copilot:watch="cd .copilot && npm run watch"
 
-# 4. Run initial discovery
+# 4. Chạy discovery ban đầu
 npm run copilot:init
 
-# 5. Use with Copilot
+# 5. Sử dụng với Copilot
 code .
 ```
 
 ---
 
-## 📖 Documentation
+## 📖 Tài Liệu
 
-### Quick Start
-- **[QUICKSTART.md](./QUICKSTART.md)** - Get started in 5 minutes
+### Bắt Đầu Nhanh
+- **[QUICKSTART.md](./QUICKSTART.md)** - Bắt đầu trong 5 phút
 
-### Comprehensive Guides
-- **[HUONG_DAN.md](./HUONG_DAN.md)** - Complete Vietnamese guide (workflow, commands, troubleshooting)
-- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Maven multi-module projects
-- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Spring Framework with XML configuration
+### Hướng Dẫn Đầy Đủ
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Hướng dẫn tiếng Việt đầy đủ (workflow, lệnh, troubleshooting)
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Hướng dẫn cho Maven multi-module projects
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Hướng dẫn cho Spring Framework với XML configuration
 
-### Quick Reference
+### Tham Khảo Nhanh
 - Update context: `npm run copilot:update`
 - Watch mode: `npm run copilot:watch`
-- Run tests: `cd .copilot && npm test`
-- View docs: `cat .copilot/docs/discovery.json`
+- Chạy tests: `cd .copilot && npm test`
+- Xem docs: `cat .copilot/docs/discovery.json`
 
 ---
 
-## 🔄 Manual Workflow (Recommended)
+## 🔄 Workflow Thủ Công (Khuyến Nghị)
 
 ```bash
-# 1. Code normally
-# ... edit files ...
+# 1. Code bình thường
+# ... chỉnh sửa files ...
 
-# 2. Update context when needed (2-3 times/day)
+# 2. Update context khi cần (2-3 lần/ngày)
 npm run copilot:update
 
-# 3. Commit normally (no hooks)
+# 3. Commit bình thường (không có hooks)
 git add .
-git commit -m "feat: add feature"
+git commit -m "feat: thêm tính năng"
 git push
 ```
 
-**When to update:**
-- ✅ Added many new files (> 5 files)
-- ✅ Installed new packages
-- ✅ Changed project structure
-- ✅ Before starting new task
-- ✅ After pulling from team
-- ✅ When Copilot suggestions are inaccurate
+**Khi nào nên update:**
+- ✅ Thêm nhiều files mới (> 5 files)
+- ✅ Cài đặt packages mới
+- ✅ Thay đổi cấu trúc project
+- ✅ Trước khi bắt đầu task mới
+- ✅ Sau khi pull từ team
+- ✅ Khi suggestions của Copilot không chính xác
 
-**When NOT to update:**
-- ❌ After every small change
-- ❌ Just fixing typos
-- ❌ Only documentation changes
+**Khi KHÔNG cần update:**
+- ❌ Sau mỗi thay đổi nhỏ
+- ❌ Chỉ sửa typo
+- ❌ Chỉ thay đổi documentation
 
-**Rule of thumb:** Update 2-3 times/day is enough
+**Nguyên tắc:** Update 2-3 lần/ngày là đủ
 
 ---
 
-## 🎯 Commands
+## 🎯 Các Lệnh
 
 ```bash
-# From project root (recommended)
-npm run copilot:update    # Update context (most used)
-npm run copilot:watch     # Auto-update on file change (optional)
-npm run copilot:init      # Full regenerate (rare)
+# Từ project root (khuyến nghị)
+npm run copilot:update    # Update context (dùng nhiều nhất)
+npm run copilot:watch     # Auto-update khi file thay đổi (tùy chọn)
+npm run copilot:init      # Tạo lại toàn bộ (hiếm khi dùng)
 
-# From .copilot/ directory
+# Từ thư mục .copilot/
 cd .copilot && npm run update    # Update context
-cd .copilot && npm test          # Run tests (16 tests)
+cd .copilot && npm test          # Chạy tests (16 tests)
 ```
 
 ---
 
-## 📊 What You Get
+## 📊 Những Gì Bạn Nhận Được
 
-### System Files
-- `.copilot/` - Automation system (101 packages)
-- `.github/copilot-instructions.md` - Context for Copilot (11.5KB)
+### Files Hệ Thống
+- `.copilot/` - Hệ thống tự động (101 packages)
+- `.github/copilot-instructions.md` - Context cho Copilot (11.5KB)
 - Tests - 16 tests, 100% pass
-- Logs - Structured JSON with rotation
+- Logs - Structured JSON với rotation
 
-### Generated Documentation
-- `docs/discovery.json` - Project metadata
-- `docs/architecture/overview.md` - Architecture overview
-- `docs/codemaps/*.json` - File categorization
-- `docs/snapshot.xml` - Full codebase snapshot
+### Documentation Được Tạo
+- `docs/discovery.json` - Metadata của project
+- `docs/architecture/overview.md` - Tổng quan kiến trúc
+- `docs/codemaps/*.json` - Phân loại files
+- `docs/snapshot.xml` - Snapshot toàn bộ codebase
 
 ---
 
-## 🔧 Configuration
+## 🔧 Cấu Hình
 
 **File:** `.copilot/config.json`
 
@@ -158,48 +158,48 @@ cd .copilot && npm test          # Run tests (16 tests)
 }
 ```
 
-**Customize:**
-- Add file types: Update `extensions`
-- Ignore directories: Update `ignore`
-- Change file size limit: Update `maxFileSize`
+**Tùy chỉnh:**
+- Thêm loại file: Update `extensions`
+- Ignore thư mục: Update `ignore`
+- Thay đổi giới hạn kích thước file: Update `maxFileSize`
 
-**After changes:** Run `npm run copilot:update`
+**Sau khi thay đổi:** Chạy `npm run copilot:update`
 
 ---
 
-## 💡 Why No Git Hooks?
+## 💡 Tại Sao Không Dùng Git Hooks?
 
-**Full user control:**
-- ✅ You decide when to update
-- ✅ No surprises during commit
-- ✅ No slow git operations
-- ✅ More flexible workflow
+**Kiểm soát hoàn toàn:**
+- ✅ Bạn quyết định khi nào update
+- ✅ Không có bất ngờ khi commit
+- ✅ Không làm chậm git operations
+- ✅ Workflow linh hoạt hơn
 
-**If you want auto-update:** Use watch mode instead:
+**Nếu muốn auto-update:** Dùng watch mode thay thế:
 ```bash
 npm run copilot:watch
 ```
 
 ---
 
-## 🎓 How to Use with GitHub Copilot
+## 🎓 Cách Sử Dụng Với GitHub Copilot
 
-### Ask About Project
+### Hỏi Về Project
 ```
-@workspace What tech stack does this project use?
-@workspace Show me the project architecture
-```
-
-### Find Code
-```
-@workspace Find all API endpoints
-@workspace Where is the authentication logic?
+@workspace Project này dùng tech stack gì?
+@workspace Cho tôi xem kiến trúc project
 ```
 
-### Generate Code
+### Tìm Code
+```
+@workspace Tìm tất cả API endpoints
+@workspace Logic authentication ở đâu?
+```
+
+### Tạo Code
 ```
 #file:.github/copilot-instructions.md
-Based on coding standards, create a new API endpoint for user management
+Dựa trên coding standards, tạo một API endpoint mới cho quản lý user
 ```
 
 ---
@@ -208,26 +208,26 @@ Based on coding standards, create a new API endpoint for user management
 
 **Quality Score:** 8.5/10
 **Tests:** 16/16 pass (100%)
-**Performance:** 2-5 seconds (small projects), 10-30 seconds (large projects)
-**Accuracy:** 95% file categorization
+**Performance:** 2-5 giây (projects nhỏ), 10-30 giây (projects lớn)
+**Accuracy:** 95% phân loại file
 
-**Expected Benefits:**
-- 70% faster code navigation
-- 20-30% better Copilot suggestions
-- 80% reduction in context switches
+**Lợi ích kỳ vọng:**
+- 70% nhanh hơn khi navigate code
+- 20-30% suggestions của Copilot tốt hơn
+- 80% giảm context switches
 
 ---
 
 ## 🆘 Troubleshooting
 
-### Discovery finds 0 files
+### Discovery tìm 0 files
 ```bash
-# Check config
+# Kiểm tra config
 cat .copilot/config.json
 
-# Add your file extensions
+# Thêm file extensions của bạn
 # Update ignore patterns
-# Run again
+# Chạy lại
 npm run copilot:update
 ```
 
@@ -239,49 +239,49 @@ npm install
 npm test
 ```
 
-### Copilot not reading instructions
+### Copilot không đọc instructions
 1. Restart VS Code
 2. Clear Copilot cache (Cmd+Shift+P → "Copilot: Clear Cache")
-3. Reference file directly: `#file:.github/copilot-instructions.md`
+3. Reference file trực tiếp: `#file:.github/copilot-instructions.md`
 
 ---
 
-## 👥 Team Setup
+## 👥 Setup Cho Team
 
 ```bash
-# 1. Commit to git
+# 1. Commit vào git
 git add .copilot/ .github/
-git commit -m "chore: add copilot workflow"
+git commit -m "chore: thêm copilot workflow"
 git push
 
-# 2. Team members pull
+# 2. Thành viên team pull
 git pull
 
-# 3. They install
+# 3. Họ cài đặt
 cd .copilot && npm install
 cd .. && npm run copilot:init
 ```
 
 ---
 
-## 📚 Full Documentation
+## 📚 Tài Liệu Đầy Đủ
 
-### User Guides
-- **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute quick start
-- **[HUONG_DAN.md](./HUONG_DAN.md)** - Comprehensive Vietnamese guide
-- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Maven projects guide
-- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Spring XML projects guide
+### Hướng Dẫn Người Dùng
+- **[QUICKSTART.md](./QUICKSTART.md)** - Bắt đầu nhanh 5 phút
+- **[HUONG_DAN.md](./HUONG_DAN.md)** - Hướng dẫn tiếng Việt đầy đủ
+- **[MAVEN_GUIDE.md](./MAVEN_GUIDE.md)** - Hướng dẫn Maven projects
+- **[SPRING_XML_GUIDE.md](./SPRING_XML_GUIDE.md)** - Hướng dẫn Spring XML projects
 
-### Configuration Files
-- **`.copilot/config.json`** - System configuration
-- **`.github/copilot-instructions.md`** - Copilot context (auto-generated)
+### Files Cấu Hình
+- **`.copilot/config.json`** - Cấu hình hệ thống
+- **`.github/copilot-instructions.md`** - Context cho Copilot (tự động tạo)
 
 ### Changelog
-- **[CHANGELOG.md](./CHANGELOG.md)** - Version history and changes
+- **[CHANGELOG.md](./CHANGELOG.md)** - Lịch sử phiên bản và thay đổi
 
 ---
 
-## ✅ Requirements
+## ✅ Yêu Cầu
 
 - Node.js 18+
 - npm 8+
@@ -290,23 +290,23 @@ cd .. && npm run copilot:init
 
 ---
 
-## 🎉 Ready to Use!
+## 🎉 Sẵn Sàng Sử Dụng!
 
 ```bash
-# Add code
+# Thêm code
 mkdir -p src && echo "console.log('Hello')" > src/index.js
 
 # Update context
 npm run copilot:update
 
-# Use with Copilot
+# Sử dụng với Copilot
 code .
 ```
 
-**Happy coding! 🚀**
+**Chúc bạn code vui vẻ! 🚀**
 
 ---
 
-**Version:** 3.0 - Manual Control (No Git Hooks)
-**Updated:** 2026-03-05
+**Phiên bản:** 3.0 - Manual Control (No Git Hooks)
+**Cập nhật:** 2026-03-05
 **License:** MIT
