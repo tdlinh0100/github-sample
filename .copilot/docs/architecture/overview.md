@@ -1,11 +1,11 @@
 # Architecture Overview
 
-**Generated:** 2026-03-05T06:36:51.265Z
+**Generated:** 2026-03-05T15:15:48.270Z
 
 ## Project Information
-- **Name:** copilot-workflow
+- **Name:** github_test
 - **Version:** 1.0.0
-- **Description:** GitHub Copilot workflow automation
+- **Description:** No description
 
 ## Tech Stack
 
@@ -81,4 +81,4 @@ Based on file analysis:
 - Related tests
 
 ## Last Updated
-2026-03-05T06:36:50.234Z
+2026-03-05T15:15:46.969Z

@@ -15,84 +15,6 @@ const __dirname = dirname(__filename);
 // FIX 1: Define PROJECT_ROOT constant to replace process.cwd()
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 
-// Logger implementation with structured logging
-class Logger {
-  constructor(logFilePath) {
-    this.logFilePath = logFilePath;
-    this.maxLogSize = 10 * 1024 * 1024; // 10MB
-    this._ensureLogDir();
-  }
-
-  _ensureLogDir() {
-    const dir = path.dirname(this.logFilePath);
-    if (!fsSync.existsSync(dir)) {
-      fsSync.mkdirSync(dir, { recursive: true });
-    }
-  }
-
-  _write(level, message, meta = {}) {
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      level,
-      message,
-      ...meta
-    };
-
-    const logLine = JSON.stringify(logEntry) + '\n';
-
-    try {
-      if (fsSync.existsSync(this.logFilePath)) {
-        const stats = fsSync.statSync(this.logFilePath);
-        if (stats.size >= this.maxLogSize) {
-          this._rotate();
-        }
-      }
-
-      fsSync.appendFileSync(this.logFilePath, logLine);
-    } catch (error) {
-      console.error('Failed to write log:', error.message);
-    }
-  }
-
-  _rotate() {
-    try {
-      const backupPath = this.logFilePath.replace('.log', `.${Date.now()}.log`);
-      fsSync.renameSync(this.logFilePath, backupPath);
-
-      const logDir = path.dirname(this.logFilePath);
-      const logName = path.basename(this.logFilePath, '.log');
-      const rotatedLogs = fsSync.readdirSync(logDir)
-        .filter(f => f.startsWith(logName) && f !== path.basename(this.logFilePath))
-        .sort()
-        .reverse();
-
-      rotatedLogs.slice(5).forEach(log => {
-        fsSync.unlinkSync(path.join(logDir, log));
-      });
-    } catch (error) {
-      console.error('Failed to rotate log:', error.message);
-    }
-  }
-
-  info(message, meta) {
-    this._write('info', message, meta);
-  }
-
-  warn(message, meta) {
-    this._write('warn', message, meta);
-  }
-
-  error(message, meta) {
-    this._write('error', message, meta);
-  }
-
-  debug(message, meta) {
-    this._write('debug', message, meta);
-  }
-}
-
-const logger = new Logger(path.join(__dirname, '../logs/discover.log'));
-
 let config;
 
 /**
@@ -157,7 +79,6 @@ async function readJsonFile(filePath) {
     const content = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
-    logger.error(`Error reading ${filePath}`, { error: error.message });
     console.error(chalk.red(`Error reading ${filePath}: ${error.message}`));
     throw error;
   }
@@ -172,46 +93,10 @@ async function writeJsonFile(filePath, data) {
   try {
     await ensureDirectoryExists(filePath);
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    logger.info(`Successfully wrote file`, { filePath });
   } catch (error) {
-    logger.error(`Error writing ${filePath}`, { error: error.message });
     console.error(chalk.red(`Error writing ${filePath}: ${error.message}`));
     throw error;
   }
-}
-
-// Improved file categorization with regex patterns
-const categoryPatterns = {
-  tests: /\.(test|spec)\.(js|ts|jsx|tsx)$|__tests__|__mocks__/,
-  frontend: /\/(components|pages|app|views|ui|layouts|hooks)\//,
-  backend: /\/(api|server|services|controllers|routes|middleware|models)\//,
-  shared: /\/(utils|lib|types|helpers|constants|shared|common)\//,
-  config: /\/config\/|\.config\.(js|ts|mjs|cjs)$|^(\.env|\.eslintrc|\.prettierrc|tsconfig\.json|package\.json)/
-};
-
-/**
- * Categorizes a file based on its path using regex patterns
- * @param {string} relativePath - Relative path of the file
- * @returns {string} Category name
- */
-function categorizeFile(relativePath) {
-  // Check in order of specificity
-  if (categoryPatterns.tests.test(relativePath)) {
-    return 'tests';
-  }
-  if (categoryPatterns.frontend.test(relativePath)) {
-    return 'frontend';
-  }
-  if (categoryPatterns.backend.test(relativePath)) {
-    return 'backend';
-  }
-  if (categoryPatterns.config.test(relativePath)) {
-    return 'config';
-  }
-  if (categoryPatterns.shared.test(relativePath)) {
-    return 'shared';
-  }
-  return 'shared'; // Default
 }
 
 async function discoverProject() {
@@ -221,7 +106,6 @@ async function discoverProject() {
   }
 
   const spinner = ora('Discovering project structure...').start();
-  logger.info('Starting project discovery');
 
   try {
     // 1. Find all source files
@@ -232,7 +116,6 @@ async function discoverProject() {
       absolute: true
     });
 
-    logger.info(`Found ${files.length} files`);
     spinner.text = `Found ${files.length} files`;
 
     // 2. Categorize files
@@ -244,9 +127,6 @@ async function discoverProject() {
       config: []
     };
 
-    let processedCount = 0;
-    const totalFiles = files.length;
-
     for (const file of files) {
       // FIX 1: Use PROJECT_ROOT instead of process.cwd()
       const relativePath = path.relative(PROJECT_ROOT, file);
@@ -255,36 +135,28 @@ async function discoverProject() {
       try {
         const stats = await fs.stat(file);
         if (stats.size > config.scan.maxFileSize) {
-          logger.warn(`Skipping large file`, {
-            file: relativePath,
-            size: stats.size,
-            maxSize: config.scan.maxFileSize
-          });
           console.log(chalk.yellow(`⚠ Skipping ${relativePath}: file size (${stats.size} bytes) exceeds maxFileSize (${config.scan.maxFileSize} bytes)`));
           continue;
         }
       } catch (error) {
-        logger.warn(`Could not check file size`, { file: relativePath, error: error.message });
         console.log(chalk.yellow(`⚠ Could not check size for ${relativePath}: ${error.message}`));
       }
 
-      const category = categorizeFile(relativePath);
-      categorized[category].push(relativePath);
-
-      processedCount++;
-      if (processedCount % 100 === 0) {
-        spinner.text = `Processing files... ${processedCount}/${totalFiles}`;
-        logger.debug(`Processing progress`, { processed: processedCount, total: totalFiles });
+      if (relativePath.includes('test') || relativePath.includes('spec') || relativePath.includes('__tests__')) {
+        categorized.tests.push(relativePath);
+      } else if (relativePath.includes('components') || relativePath.includes('pages') || relativePath.includes('app')) {
+        categorized.frontend.push(relativePath);
+      } else if (relativePath.includes('api') || relativePath.includes('server') || relativePath.includes('services')) {
+        categorized.backend.push(relativePath);
+      } else if (relativePath.includes('utils') || relativePath.includes('lib') || relativePath.includes('types') || relativePath.includes('helpers')) {
+        categorized.shared.push(relativePath);
+      } else if (relativePath.includes('config') || relativePath.endsWith('.config.js') || relativePath.endsWith('.config.ts')) {
+        categorized.config.push(relativePath);
+      } else {
+        // Default to shared if can't categorize
+        categorized.shared.push(relativePath);
       }
     }
-
-    logger.info('File categorization complete', {
-      frontend: categorized.frontend.length,
-      backend: categorized.backend.length,
-      shared: categorized.shared.length,
-      tests: categorized.tests.length,
-      config: categorized.config.length
-    });
 
     // 3. Detect tech stack
     let packageJson = { dependencies: {}, devDependencies: {} };
@@ -295,9 +167,7 @@ async function discoverProject() {
       await fs.access(packageJsonPath);
       // FIX 3: Use readJsonFile helper with error handling
       packageJson = await readJsonFile(packageJsonPath);
-      logger.info('Package.json loaded', { name: packageJson.name });
     } catch {
-      logger.warn('Package.json not found, using defaults');
       // package.json doesn't exist, use defaults
     }
 
@@ -340,8 +210,6 @@ async function discoverProject() {
     if (deps['cypress']) techStack.testing.push('Cypress');
     if (deps['@testing-library/react']) techStack.testing.push('React Testing Library');
 
-    logger.info('Tech stack detected', techStack);
-
     // 4. Find entry points
     const entryPoints = {
       frontend: [],
@@ -376,11 +244,6 @@ async function discoverProject() {
       });
     }
 
-    logger.info('Entry points discovered', {
-      frontend: entryPoints.frontend.length,
-      backend: entryPoints.backend.length
-    });
-
     // 5. Save discovery results
     const discovery = {
       timestamp: new Date().toISOString(),
@@ -400,7 +263,6 @@ async function discoverProject() {
     await writeJsonFile(outputPath, discovery);
 
     spinner.succeed(chalk.green('Discovery complete!'));
-    logger.info('Discovery completed successfully', { outputPath });
 
     console.log(chalk.cyan('\n📊 Project Summary:'));
     console.log(`  Total files: ${files.length}`);
@@ -419,7 +281,6 @@ async function discoverProject() {
 
   } catch (error) {
     spinner.fail(chalk.red('Discovery failed'));
-    logger.error('Discovery failed', { error: error.message, stack: error.stack });
     console.error(error);
     process.exit(1);
   }

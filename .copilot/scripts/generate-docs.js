@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import chalk from 'chalk';
 import ora from 'ora';
 import { fileURLToPath } from 'url';
@@ -11,7 +11,44 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json'), 'utf-8'));
+// Helper function: Ensure directory exists before writing
+function ensureDirectoryExists(filePath) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+// Helper function: Safe JSON file reading with error handling
+function readJsonFile(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  } catch (error) {
+    throw new Error(`Failed to read JSON file at ${filePath}: ${error.message}`);
+  }
+}
+
+// Helper function: Safe JSON file writing with error handling
+function writeJsonFile(filePath, data) {
+  try {
+    ensureDirectoryExists(filePath);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (error) {
+    throw new Error(`Failed to write JSON file at ${filePath}: ${error.message}`);
+  }
+}
+
+// Helper function: Safe text file writing with error handling
+function writeTextFile(filePath, content) {
+  try {
+    ensureDirectoryExists(filePath);
+    fs.writeFileSync(filePath, content);
+  } catch (error) {
+    throw new Error(`Failed to write text file at ${filePath}: ${error.message}`);
+  }
+}
+
+const config = readJsonFile(path.join(__dirname, '../config.json'));
 
 async function generateDocs() {
   console.log(chalk.cyan('🚀 Generating documentation...\n'));
@@ -20,13 +57,31 @@ async function generateDocs() {
   if (config.tools.repopack.enabled) {
     const spinner = ora('Generating codebase snapshot...').start();
     try {
-      execSync('npx repopack --output .copilot/docs/snapshot.xml --style xml', {
+      // FIX: Use spawnSync with array arguments to prevent command injection
+      const projectRoot = path.resolve(__dirname, '../..');
+      const outputPath = path.join(projectRoot, '.copilot/docs/snapshot.xml');
+
+      // Ensure output directory exists
+      ensureDirectoryExists(outputPath);
+
+      // Safe execution with sanitized arguments
+      const result = spawnSync('npx', ['repopack', '--output', '.copilot/docs/snapshot.xml', '--style', 'xml'], {
+        cwd: projectRoot,
         stdio: 'pipe',
-        cwd: path.resolve(__dirname, '../..')
+        encoding: 'utf-8'
       });
+
+      if (result.error) {
+        throw new Error(`Failed to spawn repopack: ${result.error.message}`);
+      }
+
+      if (result.status !== 0) {
+        throw new Error(`Repopack exited with code ${result.status}: ${result.stderr}`);
+      }
+
       spinner.succeed('Snapshot generated');
     } catch (error) {
-      spinner.warn('Repopack failed, skipping snapshot (install with: npm install -g repopack)');
+      spinner.warn(`Repopack failed, skipping snapshot: ${error.message} (install with: npm install -g repopack)`);
     }
   }
 
@@ -39,7 +94,8 @@ async function generateDocs() {
     process.exit(1);
   }
 
-  const discovery = JSON.parse(fs.readFileSync(discoveryPath, 'utf-8'));
+  // FIX: Use safe JSON reading with error handling
+  const discovery = readJsonFile(discoveryPath);
 
   const archDoc = `# Architecture Overview
 
@@ -127,7 +183,8 @@ Based on file analysis:
 ${discovery.timestamp}
 `;
 
-  fs.writeFileSync(path.join(__dirname, '../docs/architecture/overview.md'), archDoc);
+  // FIX: Use safe file writing with directory creation
+  writeTextFile(path.join(__dirname, '../docs/architecture/overview.md'), archDoc);
   spinner2.succeed('Architecture docs generated');
 
   // 3. Generate codemaps
@@ -150,17 +207,18 @@ ${discovery.timestamp}
     }
   };
 
-  fs.writeFileSync(
+  // FIX: Use safe file writing with directory creation and error handling
+  writeJsonFile(
     path.join(__dirname, '../docs/codemaps/frontend-map.json'),
-    JSON.stringify(codemaps.frontend, null, 2)
+    codemaps.frontend
   );
-  fs.writeFileSync(
+  writeJsonFile(
     path.join(__dirname, '../docs/codemaps/backend-map.json'),
-    JSON.stringify(codemaps.backend, null, 2)
+    codemaps.backend
   );
-  fs.writeFileSync(
+  writeJsonFile(
     path.join(__dirname, '../docs/codemaps/shared-map.json'),
-    JSON.stringify(codemaps.shared, null, 2)
+    codemaps.shared
   );
 
   spinner3.succeed('Codemaps generated');
