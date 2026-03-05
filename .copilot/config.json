@@ -1,0 +1,54 @@
+{
+  "project": {
+    "name": "github_test",
+    "version": "1.0.0",
+    "type": "fullstack"
+  },
+  "scan": {
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      ".git",
+      ".next",
+      "coverage",
+      "*.log",
+      ".copilot-workflow"
+    ],
+    "extensions": [
+      ".js",
+      ".ts",
+      ".jsx",
+      ".tsx",
+      ".py",
+      ".go",
+      ".rs",
+      ".java",
+      ".php"
+    ],
+    "maxFileSize": 100000
+  },
+  "documentation": {
+    "outputDir": ".copilot/docs",
+    "codemapDir": ".copilot/docs/codemaps",
+    "updateOnChange": true,
+    "formats": ["json", "markdown"]
+  },
+  "context": {
+    "maxTokens": 100000,
+    "layers": {
+      "project": 10000,
+      "feature": 30000,
+      "task": 60000
+    }
+  },
+  "tools": {
+    "repopack": {
+      "enabled": true,
+      "format": "xml"
+    },
+    "astGrep": {
+      "enabled": true
+    }
+  }
+}

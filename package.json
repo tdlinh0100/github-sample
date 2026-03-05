@@ -1,0 +1,9 @@
+{
+  "name": "github_test",
+  "version": "1.0.0",
+  "scripts": {
+    "copilot:init": "cd .copilot && npm run discover && npm run generate",
+    "copilot:update": "cd .copilot && npm run update",
+    "copilot:watch": "cd .copilot && npm run watch"
+  }
+}

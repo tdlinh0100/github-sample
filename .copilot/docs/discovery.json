@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-03-05T06:33:54.037Z",
+  "totalFiles": 0,
+  "categorized": {
+    "frontend": [],
+    "backend": [],
+    "shared": [],
+    "tests": [],
+    "config": []
+  },
+  "techStack": {
+    "frontend": [],
+    "backend": [],
+    "database": [],
+    "testing": []
+  },
+  "entryPoints": {
+    "frontend": [],
+    "backend": [],
+    "tests": []
+  },
+  "projectMetadata": {
+    "name": "copilot-workflow",
+    "version": "1.0.0",
+    "description": "GitHub Copilot workflow automation"
+  }
+}
