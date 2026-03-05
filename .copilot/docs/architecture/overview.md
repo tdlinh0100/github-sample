@@ -1,6 +1,6 @@
 # Architecture Overview
 
-**Generated:** 2026-03-05T06:33:55.291Z
+**Generated:** 2026-03-05T06:36:51.265Z
 
 ## Project Information
 - **Name:** copilot-workflow
@@ -81,4 +81,4 @@ Based on file analysis:
 - Related tests
 
 ## Last Updated
-2026-03-05T06:33:54.037Z
+2026-03-05T06:36:50.234Z
